@@ -19,6 +19,17 @@ export function Navbar() {
     };
 
     checkAuth();
+    
+    // Listen for auth state changes
+    const handleStorageChange = () => {
+      checkAuth();
+    };
+
+    window.addEventListener('storage', handleStorageChange);
+    
+    return () => {
+      window.removeEventListener('storage', handleStorageChange);
+    };
   }, []);
 
   const handleLogout = async () => {
@@ -66,12 +77,16 @@ export function Navbar() {
                     Create Post
                   </Button>
                   <div className="flex items-center space-x-2">
-                    <Avatar className="h-8 w-8">
-                      <AvatarFallback className="bg-primary text-primary-foreground text-sm">
-                        {user.name.charAt(0).toUpperCase()}
-                      </AvatarFallback>
-                    </Avatar>
-                    <span className="text-sm font-medium hidden sm:inline">{user.name}</span>
+                    <Link href="/profile">
+                      <Button variant="ghost" size="sm" className="flex items-center space-x-2">
+                        <Avatar className="h-8 w-8">
+                          <AvatarFallback className="bg-primary text-primary-foreground text-sm">
+                            {user.name.charAt(0).toUpperCase()}
+                          </AvatarFallback>
+                        </Avatar>
+                        <span className="text-sm font-medium hidden sm:inline">{user.name}</span>
+                      </Button>
+                    </Link>
                     <Button variant="ghost" size="sm" onClick={handleLogout}>
                       Logout
                     </Button>

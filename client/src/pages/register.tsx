@@ -35,7 +35,8 @@ export default function Register() {
         description: "Your account has been created successfully.",
       });
       
-      setLocation("/");
+      // Force a page refresh to ensure navbar updates
+      window.location.href = "/";
     } catch (error: any) {
       toast({
         title: "Registration failed",

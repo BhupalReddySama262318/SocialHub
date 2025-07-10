@@ -34,7 +34,8 @@ export default function Login() {
         description: "You have successfully logged in.",
       });
       
-      setLocation("/");
+      // Force a page refresh to ensure navbar updates
+      window.location.href = "/";
     } catch (error: any) {
       toast({
         title: "Login failed",

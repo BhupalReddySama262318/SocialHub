@@ -54,6 +54,7 @@ export class AuthService {
 
   static async logout(): Promise<void> {
     this.removeToken();
+    localStorage.removeItem(this.USER_KEY);
   }
 
   static async getCurrentUser(): Promise<Omit<User, 'password'> | null> {
