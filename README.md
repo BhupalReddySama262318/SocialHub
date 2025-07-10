@@ -1,3 +1,9 @@
+# SocialHub
+
+[![Live Demo](https://img.shields.io/badge/Live%20Demo-Visit%20Now-blue?style=for-the-badge)](https://socialhub-twyy.onrender.com/)
+
+Check out the live website: [https://socialhub-twyy.onrender.com/](https://socialhub-twyy.onrender.com/)
+
 # SocialHub - A Modern Social Media Platform
 
 A Twitter-like social media platform built with React, Express.js, and MongoDB that allows users to share posts with text, images, and videos.
@@ -41,7 +47,7 @@ A Twitter-like social media platform built with React, Express.js, and MongoDB t
 1. **Clone the repository:**
    ```bash
    git clone <repository-url>
-   cd TaskTrackerPro
+   cd SocialHub
    ```
 
 2. **Install dependencies:**

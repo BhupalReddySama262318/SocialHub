@@ -49,9 +49,9 @@ export default function Register() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-muted/50 px-4">
-      <Card className="w-full max-w-md">
-        <CardHeader className="text-center">
+    <div className="min-h-screen flex items-center justify-center bg-muted/50 px-2 sm:px-4">
+      <Card className="w-full max-w-md p-3 sm:p-6">
+        <CardHeader className="text-center p-2 sm:p-4">
           <div className="flex justify-center mb-4">
             <div className="w-12 h-12 bg-gradient-to-r from-primary to-violet-600 rounded-lg flex items-center justify-center">
               <Hash className="text-white h-6 w-6" />
@@ -63,49 +63,49 @@ export default function Register() {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-3 sm:space-y-4">
             <div>
-              <Label htmlFor="name">Name</Label>
+              <Label htmlFor="name" className="text-xs sm:text-sm">Name</Label>
               <Input
                 id="name"
                 {...form.register('name')}
                 placeholder="Enter your full name"
-                className="mt-1"
+                className="mt-1 text-xs sm:text-sm"
               />
               {form.formState.errors.name && (
-                <p className="text-sm text-destructive mt-1">
+                <p className="text-xs sm:text-sm text-destructive mt-1">
                   {form.formState.errors.name.message}
                 </p>
               )}
             </div>
 
             <div>
-              <Label htmlFor="email">Email</Label>
+              <Label htmlFor="email" className="text-xs sm:text-sm">Email</Label>
               <Input
                 id="email"
                 type="email"
                 {...form.register('email')}
                 placeholder="Enter your email"
-                className="mt-1"
+                className="mt-1 text-xs sm:text-sm"
               />
               {form.formState.errors.email && (
-                <p className="text-sm text-destructive mt-1">
+                <p className="text-xs sm:text-sm text-destructive mt-1">
                   {form.formState.errors.email.message}
                 </p>
               )}
             </div>
 
             <div>
-              <Label htmlFor="password">Password</Label>
+              <Label htmlFor="password" className="text-xs sm:text-sm">Password</Label>
               <Input
                 id="password"
                 type="password"
                 {...form.register('password')}
                 placeholder="Create a password"
-                className="mt-1"
+                className="mt-1 text-xs sm:text-sm"
               />
               {form.formState.errors.password && (
-                <p className="text-sm text-destructive mt-1">
+                <p className="text-xs sm:text-sm text-destructive mt-1">
                   {form.formState.errors.password.message}
                 </p>
               )}
@@ -113,7 +113,7 @@ export default function Register() {
 
             <Button
               type="submit"
-              className="w-full"
+              className="w-full text-base sm:text-lg"
               disabled={isLoading}
             >
               {isLoading ? (

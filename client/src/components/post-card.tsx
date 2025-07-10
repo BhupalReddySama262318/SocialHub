@@ -79,11 +79,11 @@ const PostCardComponent = ({ post, optimistic }: PostCardProps) => {
   return (
     <Card className="overflow-hidden hover:shadow-md transition-shadow duration-300 group">
       {post.mediaUrl && (
-        <div className="relative">
+        <div className="relative bg-zinc-100 dark:bg-zinc-800">
           {post.mediaType === 'video' ? (
             <video
               src={post.mediaUrl}
-              className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
+              className="w-full h-64 object-contain group-hover:scale-105 transition-transform duration-300 bg-zinc-100 dark:bg-zinc-800"
               controls
               preload="metadata"
               aria-label="Post video"
@@ -92,7 +92,7 @@ const PostCardComponent = ({ post, optimistic }: PostCardProps) => {
             <img
               src={post.mediaUrl}
               alt={post.title}
-              className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
+              className="w-full h-64 object-contain group-hover:scale-105 transition-transform duration-300 bg-zinc-100 dark:bg-zinc-800"
               aria-label="Post image"
             />
           )}
@@ -106,27 +106,26 @@ const PostCardComponent = ({ post, optimistic }: PostCardProps) => {
         </div>
       )}
       
-      <CardContent className="p-4">
-        <div className="flex items-center mb-3">
-          <Avatar className="h-10 w-10 mr-3">
+      <CardContent className="p-3 sm:p-4">
+        <div className="flex items-center mb-2 sm:mb-3">
+          <Avatar className="h-8 w-8 sm:h-10 sm:w-10 mr-2 sm:mr-3">
             <AvatarFallback className="bg-primary text-primary-foreground">
               {post.userName.charAt(0).toUpperCase()}
             </AvatarFallback>
           </Avatar>
           <div>
-            <h3 className="font-medium text-foreground">{post.userName}</h3>
-            <p className="text-sm text-muted-foreground">{timeAgo}</p>
+            <h3 className="font-medium text-foreground text-sm sm:text-base">{post.userName}</h3>
+            <p className="text-xs sm:text-sm text-muted-foreground">{timeAgo}</p>
           </div>
         </div>
-        
-        <h4 className="font-semibold text-foreground mb-2">{post.title}</h4>
+        <h4 className="font-semibold text-foreground text-base sm:text-lg mb-1 sm:mb-2">{post.title}</h4>
         {post.description && (
-          <p className="text-muted-foreground text-sm mb-3 line-clamp-3">
+          <p className="text-muted-foreground text-xs sm:text-sm mb-2 sm:mb-3 line-clamp-3">
             {post.description}
           </p>
         )}
         
-        <div className="flex items-center justify-between text-sm text-muted-foreground">
+        <div className="flex items-center justify-between text-xs sm:text-sm text-muted-foreground">
           <Button
             variant="ghost"
             size="sm"

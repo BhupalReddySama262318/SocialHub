@@ -323,245 +323,119 @@ export default function Profile() {
   }
 
   return (
-    <div className="min-h-screen bg-background py-8">
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-foreground">Profile Settings</h1>
-          <p className="text-muted-foreground mt-2">Manage your account settings and preferences</p>
-        </div>
-
-        <Tabs defaultValue="profile" className="w-full">
-          <TabsList className="grid w-full grid-cols-3">
-            <TabsTrigger value="profile">Profile</TabsTrigger>
-            <TabsTrigger value="security">Security</TabsTrigger>
-            <TabsTrigger value="myposts">My Posts</TabsTrigger>
-          </TabsList>
-
-          <TabsContent value="profile" className="space-y-6">
-            <div className="flex justify-end">
-              <Button variant="destructive" onClick={handleDeleteAccount}>
-                Delete Account
-              </Button>
-            </div>
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <UserIcon className="h-5 w-5" />
-                  Profile Information
-                </CardTitle>
-                <CardDescription>
-                  Update your profile information and profile picture
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-6">
-                {/* Profile Picture */}
-                <div className="flex items-center space-x-4">
-                  <Avatar className="h-20 w-20">
-                    {profileImage ? (
-                      <AvatarImage src={profileImage} alt="Profile" />
-                    ) : (
-                      <AvatarFallback className="bg-primary text-primary-foreground text-lg">
-                        {user.name.charAt(0).toUpperCase()}
-                      </AvatarFallback>
-                    )}
-                  </Avatar>
-                  <div>
-                    <Label htmlFor="profile-image" className="cursor-pointer">
-                      <Button variant="outline" className="flex items-center gap-2" disabled={updating}>
-                        <Camera className="h-4 w-4" />
-                        {updating ? "Uploading..." : "Change Picture"}
-                      </Button>
-                    </Label>
-                    <Input
-                      id="profile-image"
-                      type="file"
-                      accept="image/*"
-                      onChange={handleImageUpload}
-                      className="hidden"
-                    />
-                    <p className="text-sm text-muted-foreground mt-1">
-                      JPG, PNG or GIF. Max size 10MB.
-                    </p>
-                  </div>
+    <div className="min-h-screen flex flex-col items-center bg-muted/50 px-2 sm:px-4 py-4">
+      <Card className="w-full max-w-2xl mb-4 p-3 sm:p-6">
+        <CardHeader className="text-center p-2 sm:p-4">
+          <div className="flex flex-col items-center gap-2 mb-2 sm:mb-4">
+            <Avatar className="h-16 w-16 sm:h-24 sm:w-24">
+              {user?.profileImage ? (
+                <AvatarImage src={user.profileImage} alt={user.name} />
+              ) : (
+                <AvatarFallback className="bg-primary text-primary-foreground text-2xl">
+                  {user?.name?.charAt(0).toUpperCase()}
+                </AvatarFallback>
+              )}
+            </Avatar>
+            <Button asChild size="sm" className="mt-1">
+              <label htmlFor="profile-image-upload" className="cursor-pointer text-xs sm:text-sm">
+                <Camera className="inline h-4 w-4 mr-1" /> Change Photo
+                <input id="profile-image-upload" type="file" accept="image/*" className="hidden" onChange={handleImageUpload} />
+              </label>
+            </Button>
+          </div>
+          <CardTitle className="text-lg sm:text-2xl font-bold mb-1">{user?.name}</CardTitle>
+          <CardDescription className="text-xs sm:text-base">{user?.email}</CardDescription>
+        </CardHeader>
+        <CardContent className="p-2 sm:p-4">
+          <Tabs defaultValue="profile" className="w-full">
+            <TabsList className="flex flex-wrap gap-2 mb-2 sm:mb-4">
+              <TabsTrigger value="profile" className="text-xs sm:text-sm">Profile</TabsTrigger>
+              <TabsTrigger value="security" className="text-xs sm:text-sm">Security</TabsTrigger>
+              <TabsTrigger value="posts" className="text-xs sm:text-sm">My Posts</TabsTrigger>
+            </TabsList>
+            <TabsContent value="profile">
+              <form className="space-y-2 sm:space-y-4" onSubmit={e => { e.preventDefault(); handleUpdateProfile(); }}>
+                <div>
+                  <Label htmlFor="name" className="text-xs sm:text-sm">Name</Label>
+                  <Input id="name" value={name} onChange={e => setName(e.target.value)} className="mt-1 text-xs sm:text-sm" />
                 </div>
-
-                {/* Name */}
-                <div className="space-y-2">
-                  <Label htmlFor="name">Full Name</Label>
-                  <Input
-                    id="name"
-                    value={name}
-                    onChange={(e) => setName(e.target.value)}
-                    placeholder="Enter your full name"
-                  />
+                <div>
+                  <Label htmlFor="email" className="text-xs sm:text-sm">Email</Label>
+                  <Input id="email" value={email} onChange={e => setEmail(e.target.value)} className="mt-1 text-xs sm:text-sm" />
                 </div>
-
-                <Button onClick={handleUpdateProfile} disabled={updating} className="w-full">
-                  <Save className="h-4 w-4 mr-2" />
-                  {updating ? "Updating..." : "Update Profile"}
-                </Button>
-              </CardContent>
-            </Card>
-          </TabsContent>
-
-          <TabsContent value="security" className="space-y-6">
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Lock className="h-5 w-5" />
-                  Privacy & Security
-                </CardTitle>
-                <CardDescription>
-                  Update your email and password to keep your account secure
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-6">
-                {/* Email */}
-                <div className="space-y-2">
-                  <Label htmlFor="email">Email Address</Label>
-                  <Input
-                    id="email"
-                    type="email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    placeholder="Enter your email address"
-                  />
-                  <Button onClick={handleUpdateProfile} disabled={updating} className="w-full mt-2">
-                    <Mail className="h-4 w-4 mr-2" />
-                    {updating ? "Updating..." : "Update Email"}
-                  </Button>
+                <Button type="submit" className="w-full sm:w-auto mt-2 sm:mt-4">Update Profile</Button>
+              </form>
+            </TabsContent>
+            <TabsContent value="security">
+              <form className="space-y-2 sm:space-y-4" onSubmit={e => { e.preventDefault(); handleChangePassword(); }}>
+                <div>
+                  <Label htmlFor="current-password" className="text-xs sm:text-sm">Current Password</Label>
+                  <Input id="current-password" type="password" value={currentPassword} onChange={e => setCurrentPassword(e.target.value)} className="mt-1 text-xs sm:text-sm" />
                 </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="current-password">Current Password</Label>
-                  <Input
-                    id="current-password"
-                    type="password"
-                    value={currentPassword}
-                    onChange={(e) => setCurrentPassword(e.target.value)}
-                    placeholder="Enter your current password"
-                  />
+                <div>
+                  <Label htmlFor="new-password" className="text-xs sm:text-sm">New Password</Label>
+                  <Input id="new-password" type="password" value={newPassword} onChange={e => setNewPassword(e.target.value)} className="mt-1 text-xs sm:text-sm" />
                 </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="new-password">New Password</Label>
-                  <Input
-                    id="new-password"
-                    type="password"
-                    value={newPassword}
-                    onChange={(e) => setNewPassword(e.target.value)}
-                    placeholder="Enter your new password"
-                  />
+                <div>
+                  <Label htmlFor="confirm-password" className="text-xs sm:text-sm">Confirm Password</Label>
+                  <Input id="confirm-password" type="password" value={confirmPassword} onChange={e => setConfirmPassword(e.target.value)} className="mt-1 text-xs sm:text-sm" />
                 </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="confirm-password">Confirm New Password</Label>
-                  <Input
-                    id="confirm-password"
-                    type="password"
-                    value={confirmPassword}
-                    onChange={(e) => setConfirmPassword(e.target.value)}
-                    placeholder="Confirm your new password"
-                  />
-                </div>
-
-                <Button onClick={handleChangePassword} disabled={updating} className="w-full mt-2">
-                  <Lock className="h-4 w-4 mr-2" />
-                  {updating ? "Updating..." : "Change Password"}
-                </Button>
-              </CardContent>
-            </Card>
-          </TabsContent>
-
-          <TabsContent value="myposts" className="space-y-6">
-            <Card>
-              <CardHeader>
-                <CardTitle>My Posts</CardTitle>
-                <CardDescription>View, edit, or delete your posts</CardDescription>
-              </CardHeader>
-              <CardContent>
+                <Button type="submit" className="w-full sm:w-auto mt-2 sm:mt-4">Change Password</Button>
+              </form>
+            </TabsContent>
+            <TabsContent value="posts">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-6">
                 {loadingMyPosts ? (
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    {Array.from({ length: 4 }).map((_, i) => <PostCardSkeleton key={i} />)}
-                  </div>
-                ) : paginatedMyPosts && paginatedMyPosts.length > 0 ? (
-                  <>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      {paginatedMyPosts.map((post) => (
-                        <div key={post.id} className="relative group border rounded-lg">
-                          <PostCard post={post} />
-                          <div className="absolute top-2 right-2 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                            <Button size="sm" variant="outline" onClick={() => openEditModal(post)}>Edit</Button>
-                            <Button size="sm" variant="destructive" onClick={() => handleDelete(post.id)}>Delete</Button>
-                          </div>
-                        </div>
-                      ))}
+                  Array.from({ length: 2 }).map((_, i) => <PostCardSkeleton key={i} />)
+                ) : myPosts && myPosts.length > 0 ? (
+                  myPosts.map(post => (
+                    <div key={post.id} className="relative">
+                      <PostCard post={post} />
+                      <div className="absolute top-2 right-2 flex gap-1">
+                        <Button size="icon" variant="ghost" onClick={() => openEditModal(post)} aria-label="Edit post"><Save className="h-4 w-4" /></Button>
+                        <Button size="icon" variant="ghost" onClick={() => handleDelete(post.id)} aria-label="Delete post"><Lock className="h-4 w-4" /></Button>
+                      </div>
                     </div>
-                    {myPosts && visibleCount < myPosts.length && (
-                      <div className="flex justify-center mt-8">
-                        <Button onClick={() => setVisibleCount((c) => c + 6)} aria-label="Load more posts">
-                          Load More
-                        </Button>
-                      </div>
-                    )}
-                  </>
+                  ))
                 ) : (
-                  <div className="text-center py-8 text-muted-foreground">You have not created any posts yet.</div>
+                  <div className="text-center py-4 text-xs sm:text-sm text-muted-foreground">No posts yet.</div>
                 )}
-              </CardContent>
-            </Card>
-
-            {/* Edit Post Modal */}
-            <Dialog open={!!editPost} onOpenChange={() => setEditPost(null)}>
-              <DialogContent className="sm:max-w-lg">
-                <DialogHeader>
-                  <DialogTitle>Edit Post</DialogTitle>
-                </DialogHeader>
-                <div className="space-y-4">
-                  <div>
-                    <Label htmlFor="edit-title">Title</Label>
-                    <Input
-                      id="edit-title"
-                      value={editTitle}
-                      onChange={e => setEditTitle(e.target.value)}
-                    />
-                  </div>
-                  <div>
-                    <Label htmlFor="edit-description">Description</Label>
-                    <Textarea
-                      id="edit-description"
-                      value={editDescription}
-                      onChange={e => setEditDescription(e.target.value)}
-                    />
-                  </div>
-                  <div>
-                    <Label htmlFor="edit-media">Media</Label>
-                    <input
-                      id="edit-media"
-                      type="file"
-                      accept="image/*,video/*"
-                      onChange={handleEditMediaSelect}
-                    />
-                    {editMediaPreview && (
-                      <div className="mt-2">
-                        {editMediaPreview.endsWith('.mp4') || editMediaPreview.endsWith('.mov') ? (
-                          <video src={editMediaPreview} controls className="w-full max-h-48" />
-                        ) : (
-                          <img src={editMediaPreview} alt="Preview" className="w-full max-h-48 object-contain" />
-                        )}
-                      </div>
-                    )}
-                  </div>
-                  <div className="flex gap-2 justify-end mt-4">
-                    <Button variant="outline" onClick={() => setEditPost(null)}>Cancel</Button>
-                    <Button onClick={handleEditSave} disabled={updateMutation.isPending}>Save</Button>
-                  </div>
+              </div>
+            </TabsContent>
+          </Tabs>
+        </CardContent>
+      </Card>
+      {/* Responsive Dialog for editing posts */}
+      {editPost && (
+        <Dialog open={!!editPost} onOpenChange={() => setEditPost(null)}>
+          <DialogContent className="max-w-xs sm:max-w-lg w-full p-3 sm:p-6">
+            <DialogHeader>
+              <DialogTitle>Edit Post</DialogTitle>
+            </DialogHeader>
+            <div className="space-y-2 sm:space-y-4">
+              <Label htmlFor="edit-title" className="text-xs sm:text-sm">Title</Label>
+              <Input id="edit-title" value={editTitle} onChange={e => setEditTitle(e.target.value)} className="text-xs sm:text-sm" />
+              <Label htmlFor="edit-description" className="text-xs sm:text-sm">Description</Label>
+              <Textarea id="edit-description" value={editDescription} onChange={e => setEditDescription(e.target.value)} className="text-xs sm:text-sm" />
+              <Label className="text-xs sm:text-sm">Media</Label>
+              <input type="file" accept="image/*,video/*" onChange={handleEditMediaSelect} className="text-xs sm:text-sm" />
+              {editMediaPreview && (
+                <div className="mt-2">
+                  {editPost.mediaType === 'video' ? (
+                    <video src={editMediaPreview} className="w-full h-40 object-contain rounded" controls />
+                  ) : (
+                    <img src={editMediaPreview} className="w-full h-40 object-contain rounded" alt="Preview" />
+                  )}
                 </div>
-              </DialogContent>
-            </Dialog>
-          </TabsContent>
-        </Tabs>
-      </div>
+              )}
+              <div className="flex gap-2 justify-end">
+                <Button size="sm" variant="secondary" onClick={() => setEditPost(null)}>Cancel</Button>
+                <Button size="sm" onClick={handleEditSave}>Save</Button>
+              </div>
+            </div>
+          </DialogContent>
+        </Dialog>
+      )}
     </div>
   );
 }
