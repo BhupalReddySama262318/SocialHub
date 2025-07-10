@@ -22,7 +22,7 @@ Preferred communication style: Simple, everyday language.
 ### Backend Architecture
 - **Runtime**: Node.js with Express.js
 - **Language**: TypeScript with ES modules
-- **Database**: PostgreSQL with Drizzle ORM
+- **Database**: MongoDB with Mongoose ODM
 - **Authentication**: JWT tokens with bcrypt for password hashing
 - **File Upload**: Multer for handling multipart/form-data
 - **Media Storage**: Cloudinary for image and video hosting
@@ -42,8 +42,9 @@ Preferred communication style: Simple, everyday language.
 - Post feed displaying all posts in a responsive grid layout
 
 ### Database Schema
-- **Users**: ID, email, name, hashed password, creation timestamp
-- **Posts**: ID, title, description, media URL, media type, user info, creation timestamp
+- **Users**: MongoDB ObjectId, email, name, hashed password, creation timestamp
+- **Posts**: MongoDB ObjectId, title, description, media URL, media type, user ID, user email, user name, creation timestamp
+- MongoDB connection using provided credentials
 - Shared schema definitions using Zod for validation
 
 ### UI/UX Features
@@ -66,8 +67,7 @@ Preferred communication style: Simple, everyday language.
 ## External Dependencies
 
 ### Core Dependencies
-- **Database**: @neondatabase/serverless for PostgreSQL connection
-- **ORM**: drizzle-orm with drizzle-kit for migrations
+- **Database**: mongodb, mongoose for MongoDB connection and ODM
 - **Authentication**: jsonwebtoken, bcryptjs
 - **File Upload**: multer, cloudinary
 - **Validation**: zod for schema validation
@@ -83,19 +83,18 @@ Preferred communication style: Simple, everyday language.
 ### Build Process
 - Frontend: Vite builds React app to `dist/public`
 - Backend: esbuild bundles Express server to `dist/index.js`
-- Database: Drizzle migrations applied via `db:push` command
+- Database: MongoDB connection via Mongoose ODM
 
 ### Environment Configuration
 - Development: `NODE_ENV=development` with tsx for hot reloading
 - Production: `NODE_ENV=production` with compiled JavaScript
-- Database: `DATABASE_URL` environment variable for PostgreSQL connection
+- Database: MongoDB Atlas connection with provided credentials
 - Cloudinary: API credentials for media upload service
 
 ### File Structure
 - `client/`: React frontend application
 - `server/`: Express.js backend API
 - `shared/`: Common TypeScript schemas and types
-- `migrations/`: Database migration files
 - Configuration files in root for tools (Vite, Tailwind, TypeScript, etc.)
 
 The application follows a monorepo structure with clear separation between frontend, backend, and shared code, making it easy to maintain and scale.

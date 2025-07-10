@@ -1,4 +1,5 @@
 import { User, Post, InsertUser, InsertPost } from "@shared/schema";
+import { UserModel, PostModel } from "./db";
 import bcrypt from "bcryptjs";
 
 export interface IStorage {
@@ -14,25 +15,31 @@ export interface IStorage {
   getPostsByUserId(userId: string): Promise<Post[]>;
 }
 
-export class MemStorage implements IStorage {
-  private users: Map<string, User>;
-  private posts: Map<string, Post>;
-  private userIdCounter: number;
-  private postIdCounter: number;
-
-  constructor() {
-    this.users = new Map();
-    this.posts = new Map();
-    this.userIdCounter = 1;
-    this.postIdCounter = 1;
-  }
-
+export class MongoStorage implements IStorage {
   async getUserById(id: string): Promise<User | undefined> {
-    return this.users.get(id);
+    const user = await UserModel.findById(id);
+    if (!user) return undefined;
+    
+    return {
+      id: user._id.toString(),
+      email: user.email,
+      name: user.name,
+      password: user.password,
+      createdAt: user.createdAt,
+    };
   }
 
   async getUserByEmail(email: string): Promise<User | undefined> {
-    return Array.from(this.users.values()).find(user => user.email === email);
+    const user = await UserModel.findOne({ email });
+    if (!user) return undefined;
+    
+    return {
+      id: user._id.toString(),
+      email: user.email,
+      name: user.name,
+      password: user.password,
+      createdAt: user.createdAt,
+    };
   }
 
   async createUser(insertUser: InsertUser): Promise<User> {
@@ -42,18 +49,21 @@ export class MemStorage implements IStorage {
     }
 
     const hashedPassword = await bcrypt.hash(insertUser.password, 10);
-    const id = this.userIdCounter.toString();
-    this.userIdCounter++;
-
-    const user: User = {
-      ...insertUser,
-      id,
+    const user = new UserModel({
+      email: insertUser.email,
+      name: insertUser.name,
       password: hashedPassword,
-      createdAt: new Date(),
+    });
+    
+    await user.save();
+    
+    return {
+      id: user._id.toString(),
+      email: user.email,
+      name: user.name,
+      password: user.password,
+      createdAt: user.createdAt,
     };
-
-    this.users.set(id, user);
-    return user;
   }
 
   async verifyPassword(email: string, password: string): Promise<User | null> {
@@ -72,33 +82,57 @@ export class MemStorage implements IStorage {
       throw new Error("User not found");
     }
 
-    const id = this.postIdCounter.toString();
-    this.postIdCounter++;
-
-    const post: Post = {
+    const post = new PostModel({
       ...insertPost,
-      id,
       userId: user.id,
       userEmail: user.email,
       userName: user.name,
-      createdAt: new Date(),
+    });
+    
+    await post.save();
+    
+    return {
+      id: post._id.toString(),
+      title: post.title,
+      description: post.description || undefined,
+      mediaUrl: post.mediaUrl || undefined,
+      mediaType: post.mediaType as "image" | "video" | undefined,
+      userId: post.userId,
+      userEmail: post.userEmail,
+      userName: post.userName,
+      createdAt: post.createdAt,
     };
-
-    this.posts.set(id, post);
-    return post;
   }
 
   async getAllPosts(): Promise<Post[]> {
-    return Array.from(this.posts.values()).sort((a, b) => 
-      b.createdAt.getTime() - a.createdAt.getTime()
-    );
+    const posts = await PostModel.find().sort({ createdAt: -1 });
+    return posts.map(post => ({
+      id: post._id.toString(),
+      title: post.title,
+      description: post.description || undefined,
+      mediaUrl: post.mediaUrl || undefined,
+      mediaType: post.mediaType as "image" | "video" | undefined,
+      userId: post.userId,
+      userEmail: post.userEmail,
+      userName: post.userName,
+      createdAt: post.createdAt,
+    }));
   }
 
   async getPostsByUserId(userId: string): Promise<Post[]> {
-    return Array.from(this.posts.values())
-      .filter(post => post.userId === userId)
-      .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
+    const posts = await PostModel.find({ userId }).sort({ createdAt: -1 });
+    return posts.map(post => ({
+      id: post._id.toString(),
+      title: post.title,
+      description: post.description || undefined,
+      mediaUrl: post.mediaUrl || undefined,
+      mediaType: post.mediaType as "image" | "video" | undefined,
+      userId: post.userId,
+      userEmail: post.userEmail,
+      userName: post.userName,
+      createdAt: post.createdAt,
+    }));
   }
 }
 
-export const storage = new MemStorage();
+export const storage = new MongoStorage();
