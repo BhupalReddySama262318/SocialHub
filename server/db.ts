@@ -13,6 +13,7 @@ const userSchema = new mongoose.Schema({
   name: { type: String, required: true },
   password: { type: String, required: true },
   createdAt: { type: Date, default: Date.now },
+  profileImage: { type: String },
 });
 
 // Post Schema
@@ -25,6 +26,18 @@ const postSchema = new mongoose.Schema({
   userEmail: { type: String, required: true },
   userName: { type: String, required: true },
   createdAt: { type: Date, default: Date.now },
+  likes: { type: [String], default: [] },
+  comments: {
+    type: [
+      {
+        userId: { type: String, required: true },
+        userName: { type: String, required: true },
+        text: { type: String, required: true },
+        createdAt: { type: Date, default: Date.now },
+      }
+    ],
+    default: []
+  },
 });
 
 export const UserModel = mongoose.model('User', userSchema);

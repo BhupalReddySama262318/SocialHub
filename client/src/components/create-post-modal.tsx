@@ -94,6 +94,11 @@ export function CreatePostModal({ isOpen, onClose }: CreatePostModalProps) {
       }
 
       await queryClient.invalidateQueries({ queryKey: ['/api/posts'] });
+      // Invalidate user's posts for profile page
+      const user = AuthService.getUser();
+      if (user) {
+        await queryClient.invalidateQueries({ queryKey: ["/api/posts/user", user.id] });
+      }
       
       toast({
         title: "Post created successfully!",

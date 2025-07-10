@@ -1,19 +1,26 @@
 import { useQuery } from "@tanstack/react-query";
 import { Post } from "@shared/schema";
-import { PostCard } from "@/components/post-card";
+import { PostCard, PostCardSkeleton } from "@/components/post-card";
 import { Button } from "@/components/ui/button";
 import { Loader2 } from "lucide-react";
+import { useState } from "react";
 
 export default function Home() {
   const { data: posts, isLoading, error } = useQuery<Post[]>({
     queryKey: ['/api/posts'],
   });
+  const [visibleCount, setVisibleCount] = useState(9);
+  const paginatedPosts = posts ? posts.slice(0, visibleCount) : [];
 
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center h-64">
-        <Loader2 className="h-8 w-8 animate-spin" />
-      </div>
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <section className="mb-12">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {Array.from({ length: 6 }).map((_, i) => <PostCardSkeleton key={i} />)}
+          </div>
+        </section>
+      </main>
     );
   }
 
@@ -51,12 +58,21 @@ export default function Home() {
           </div>
         </div>
         
-        {posts && posts.length > 0 ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {posts.map((post) => (
-              <PostCard key={post.id} post={post} />
-            ))}
-          </div>
+        {paginatedPosts && paginatedPosts.length > 0 ? (
+          <>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {paginatedPosts.map((post) => (
+                <PostCard key={post.id} post={post} />
+              ))}
+            </div>
+            {posts && visibleCount < posts.length && (
+              <div className="flex justify-center mt-8">
+                <Button onClick={() => setVisibleCount((c) => c + 9)} aria-label="Load more posts">
+                  Load More
+                </Button>
+              </div>
+            )}
+          </>
         ) : (
           <div className="text-center py-12">
             <p className="text-muted-foreground">No posts yet. Be the first to share something!</p>

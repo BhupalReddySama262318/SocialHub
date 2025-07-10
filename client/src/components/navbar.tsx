@@ -5,12 +5,48 @@ import { User } from "@shared/schema";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { CreatePostModal } from "./create-post-modal";
-import { Hash, Home, User as UserIcon, Plus } from "lucide-react";
+import { Hash, Home, User as UserIcon, Plus, Sun, Moon } from "lucide-react";
+
+function useDarkMode() {
+  const [isDark, setIsDark] = useState(() => {
+    if (typeof window !== 'undefined') {
+      return document.documentElement.classList.contains('dark');
+    }
+    return false;
+  });
+
+  useEffect(() => {
+    const saved = localStorage.getItem('theme');
+    if (saved === 'dark') {
+      document.documentElement.classList.add('dark');
+      setIsDark(true);
+    } else if (saved === 'light') {
+      document.documentElement.classList.remove('dark');
+      setIsDark(false);
+    }
+  }, []);
+
+  const toggle = () => {
+    setIsDark((prev) => {
+      const next = !prev;
+      if (next) {
+        document.documentElement.classList.add('dark');
+        localStorage.setItem('theme', 'dark');
+      } else {
+        document.documentElement.classList.remove('dark');
+        localStorage.setItem('theme', 'light');
+      }
+      return next;
+    });
+  };
+  return [isDark, toggle] as const;
+}
 
 export function Navbar() {
   const [location] = useLocation();
   const [user, setUser] = useState<Omit<User, 'password'> | null>(null);
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+  const [isDark, toggleDark] = useDarkMode();
 
   useEffect(() => {
     const checkAuth = async () => {
@@ -40,38 +76,42 @@ export function Navbar() {
 
   return (
     <>
-      <header className="bg-white shadow-sm border-b border-border sticky top-0 z-50">
+      <header className="bg-white dark:bg-zinc-900 shadow-sm border-b border-border dark:border-zinc-800 sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             {/* Logo */}
             <Link href="/" className="flex items-center">
-              <div className="w-8 h-8 bg-gradient-to-r from-primary to-violet-600 rounded-lg flex items-center justify-center">
+              <div className="w-8 h-8 bg-gradient-to-r from-primary to-violet-600 dark:from-zinc-800 dark:to-zinc-700 rounded-lg flex items-center justify-center">
                 <Hash className="text-white text-sm" />
               </div>
-              <span className="ml-2 text-xl font-bold text-foreground">SocialHub</span>
+              <span className="ml-2 text-xl font-bold text-foreground dark:text-white">SocialHub</span>
             </Link>
 
             {/* Desktop Navigation */}
             <nav className="hidden md:flex space-x-8">
-              <Link href="/" className="text-muted-foreground hover:text-primary px-3 py-2 rounded-md text-sm font-medium transition-colors">
+              <Link href="/" className="text-muted-foreground hover:text-primary px-3 py-2 rounded-md text-sm font-medium transition-colors" aria-label="Home" tabIndex={0}>
                 <Home className="inline mr-1 h-4 w-4" />
                 Home
               </Link>
               {user && (
-                <Link href="/profile" className="text-muted-foreground hover:text-primary px-3 py-2 rounded-md text-sm font-medium transition-colors">
+                <Link href="/profile" className="text-muted-foreground hover:text-primary px-3 py-2 rounded-md text-sm font-medium transition-colors" aria-label="Profile" tabIndex={0}>
                   <UserIcon className="inline mr-1 h-4 w-4" />
                   Profile
                 </Link>
               )}
             </nav>
 
-            {/* Auth Section */}
+            {/* Auth Section & Dark Mode Toggle */}
             <div className="flex items-center space-x-4">
+              <Button variant="ghost" size="icon" onClick={toggleDark} aria-label="Toggle dark mode">
+                {isDark ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
+              </Button>
               {user ? (
                 <div className="flex items-center space-x-3">
                   <Button 
                     onClick={() => setIsCreateModalOpen(true)}
-                    className="bg-primary hover:bg-primary/90 text-primary-foreground"
+                    className="bg-primary hover:bg-primary/90 text-primary-foreground dark:bg-zinc-800 dark:text-white dark:hover:bg-zinc-700"
+                    aria-label="Create Post"
                   >
                     <Plus className="h-4 w-4 mr-1" />
                     Create Post
@@ -87,7 +127,7 @@ export function Navbar() {
                         <span className="text-sm font-medium hidden sm:inline">{user.name}</span>
                       </Button>
                     </Link>
-                    <Button variant="ghost" size="sm" onClick={handleLogout}>
+                    <Button variant="ghost" size="sm" onClick={handleLogout} aria-label="Logout" className="dark:text-white">
                       Logout
                     </Button>
                   </div>
@@ -95,10 +135,10 @@ export function Navbar() {
               ) : (
                 <div className="flex items-center space-x-3">
                   <Link href="/login">
-                    <Button variant="ghost">Sign In</Button>
+                    <Button variant="ghost" aria-label="Sign In" className="dark:text-white">Sign In</Button>
                   </Link>
                   <Link href="/register">
-                    <Button>Sign Up</Button>
+                    <Button aria-label="Sign Up" className="dark:text-white">Sign Up</Button>
                   </Link>
                 </div>
               )}

@@ -7,6 +7,7 @@ export const userSchema = z.object({
   name: z.string(),
   password: z.string(),
   createdAt: z.date(),
+  profileImage: z.string().optional(),
 });
 
 export const insertUserSchema = userSchema.omit({ id: true, createdAt: true });
@@ -25,9 +26,16 @@ export const postSchema = z.object({
   userEmail: z.string(),
   userName: z.string(),
   createdAt: z.date(),
+  likes: z.array(z.string()).default([]),
+  comments: z.array(z.object({
+    userId: z.string(),
+    userName: z.string(),
+    text: z.string(),
+    createdAt: z.date(),
+  })).default([]),
 });
 
-export const insertPostSchema = postSchema.omit({ id: true, createdAt: true, userId: true, userEmail: true, userName: true });
+export const insertPostSchema = postSchema.omit({ id: true, createdAt: true, userId: true, userEmail: true, userName: true, likes: true, comments: true });
 
 export type Post = z.infer<typeof postSchema>;
 export type InsertPost = z.infer<typeof insertPostSchema>;
