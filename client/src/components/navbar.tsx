@@ -5,7 +5,7 @@ import { User } from "@shared/schema";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { CreatePostModal } from "./create-post-modal";
-import { Hash, Home, Compass, User as UserIcon, Plus } from "lucide-react";
+import { Hash, Home, User as UserIcon, Plus } from "lucide-react";
 
 export function Navbar() {
   const [location] = useLocation();
@@ -45,10 +45,6 @@ export function Navbar() {
               <Link href="/" className="text-muted-foreground hover:text-primary px-3 py-2 rounded-md text-sm font-medium transition-colors">
                 <Home className="inline mr-1 h-4 w-4" />
                 Home
-              </Link>
-              <Link href="/explore" className="text-muted-foreground hover:text-primary px-3 py-2 rounded-md text-sm font-medium transition-colors">
-                <Compass className="inline mr-1 h-4 w-4" />
-                Explore
               </Link>
               {user && (
                 <Link href="/profile" className="text-muted-foreground hover:text-primary px-3 py-2 rounded-md text-sm font-medium transition-colors">
